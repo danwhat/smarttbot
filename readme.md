@@ -1,0 +1,1 @@
+mysql --password=root < script_db.sql

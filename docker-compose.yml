@@ -1,0 +1,28 @@
+version: '3.1'
+services:
+  db:
+    build: ./db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: smarttbot
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/script_db.sql:/script_db.sql
+    networks:
+      - backend
+  app:
+    build: ./app
+    restart: always
+    working_dir: "/home/app"
+    volumes:
+      - ./app:/home/app
+    ports:
+      - "5000:5000"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: "bridge"
