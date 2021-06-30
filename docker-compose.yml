@@ -14,7 +14,6 @@ services:
       - backend
   app:
     build: ./app
-    restart: always
     working_dir: "/home/app"
     volumes:
       - ./app:/home/app
