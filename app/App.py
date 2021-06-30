@@ -1,77 +1,54 @@
-import datetime, time, requests, numpy, decimal
-from Candle import Candle
+import datetime, time, decimal
+
+from Helper import APIreturnTicker
+from Connection import CandleDao
 
 if __name__ == '__main__':
   
-  min1 = datetime.timedelta(minutes=1)
-  min5 = datetime.timedelta(minutes=5)
-  min10 = datetime.timedelta(minutes=10)
+  CandleDaoWorking = CandleDao()
 
-  NextCandle1 = datetime.datetime.now() + min1
-  NextCandle5 = datetime.datetime.now() + min5
-  NextCandle10 = datetime.datetime.now() + min10
-
-  #Arrays de Candles
-  candles1minArray = []
-  candles5minArray = []
+  NextCandle1 = datetime.datetime.now() + datetime.timedelta(seconds=10)
+  NextCandle5 = datetime.datetime.now() + datetime.timedelta(minutes=5)
+  NextCandle10 = datetime.datetime.now() + datetime.timedelta(minutes=10)
 
   #Atributos
   openValue = None
   lowValue = None
   highValue = None
 
-  # Primeiro Request
-  url = "https://poloniex.com/public?command=returnTicker"
-  response = requests.get(url)
-  responsejson = response.json()['BTC_BTS']
-
   count = 0
   while True:
+    print(f"loop {count}")
+    count += 1
     time.sleep(1)
-    print(f"loop numero {count}")
-    count += 1 
-
-    # Requests
-    response = requests.get(url)
-    responsejson = response.json()['BTC_BTS']
+    data = APIreturnTicker()
 
     # Atualizar atributos
     if openValue == None:
-      openValue = decimal.Decimal(responsejson['last'])
-      lowValue = decimal.Decimal(responsejson['lowestAsk'])
-      highValue = decimal.Decimal(responsejson['highestBid'])
+      openValue = decimal.Decimal(data['last'])
+      lowValue = decimal.Decimal(data['lowestAsk'])
+      highValue = decimal.Decimal(data['highestBid'])
     else:
-      if lowValue > decimal.Decimal(responsejson['lowestAsk']):
-        lowValue = decimal.Decimal(responsejson['lowestAsk'])
-      if highValue < decimal.Decimal(responsejson['highestBid']):
-        highValue = decimal.Decimal(responsejson['highestBid'])
-
+      if lowValue > decimal.Decimal(data['lowestAsk']):
+        lowValue = decimal.Decimal(data['lowestAsk'])
+      if highValue < decimal.Decimal(data['highestBid']):
+        highValue = decimal.Decimal(data['highestBid'])
 
     # Criar candles
     now = datetime.datetime.now()
 
     if NextCandle1 <= now :
-    # Adiciona ao banco de dados
-    # Adiciona no array de candles
-    # Reseta Atributos
       print("Hora do Candle de 1min")
-      NextCandle1 += min1
-      vela = Candle(
-          currencyId = 1,
-          frequency = 1,
-          openValue = openValue,
-          lowValue = openValue,
-          highValue = highValue,
-          closeValue = decimal.Decimal(responsejson['last']),
+      NextCandle1 += datetime.timedelta(minutes=1)
+      CandleDaoWorking.addCandle(
+        currencyId = 1,
+        frequency = 1,
+        openValue = openValue,
+        closeValue = decimal.Decimal(data['last']),
+        lowValue = openValue,
+        highValue = highValue
       )
-
-      candles1minArray.append(vela)
-
-      print(vela.regDate)
-      print(vela.openValue)
-      print(vela.closeValue)
-      print(vela.lowValue)
-      print(vela.highValue)
+      # candles1minArray.append(vela)
 
       openValue = None
       lowValue = []

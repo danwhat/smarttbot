@@ -1,14 +1,11 @@
-import sys
-sys.path.append('../db')
-
-from MySqlConnection import MySqlConnection
+import MySqlConnection
 
 class CandleDao:
   
   __db = None
 
   def __init__(self):
-    self.__db = MySqlConnection()
+    self.__db = MySqlConnection.Connection()
   
   def addCandle(self, currencyId, frequency, openValue, closeValue, lowValue, highValue):
     query = f"insert into candles(currency_id, frequency, open_value, close_value, low_value, high_value) values ({currencyId},{frequency},{openValue},{closeValue},{lowValue},{highValue});"
