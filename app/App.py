@@ -1,76 +1,64 @@
-import datetime, time, decimal
-
+import time, decimal, datetime
+from dao.CandleDAO import CandleDAO
 from Helper import APIreturnTicker
-from Connection import CandleDao
+dao = CandleDAO()
 
-if __name__ == '__main__':
-  
-  CandleDaoWorking = CandleDao()
+NextCandle1 = datetime.datetime.now() + datetime.timedelta(seconds=6)
+NextCandle5 = datetime.datetime.now() + datetime.timedelta(seconds=30)
+NextCandle10 = datetime.datetime.now() + datetime.timedelta(seconds=60)
 
-  NextCandle1 = datetime.datetime.now() + datetime.timedelta(seconds=10)
-  NextCandle5 = datetime.datetime.now() + datetime.timedelta(minutes=5)
-  NextCandle10 = datetime.datetime.now() + datetime.timedelta(minutes=10)
+openValue = None
+lowValue = None
+highValue = None
 
-  #Atributos
-  openValue = None
-  lowValue = None
-  highValue = None
+count = 0  
 
-  count = 0
-  while True:
-    print(f"loop {count}")
-    count += 1
-    time.sleep(1)
-    data = APIreturnTicker()
+while True:
+  print(f"loop {count}")
+  count += 1
+  time.sleep(1)
+  data = APIreturnTicker()
 
-    # Atualizar atributos
-    if openValue == None:
-      openValue = decimal.Decimal(data['last'])
+  # Atualizar atributos
+  if openValue == None:
+    openValue = decimal.Decimal(data['last'])
+    lowValue = decimal.Decimal(data['lowestAsk'])
+    highValue = decimal.Decimal(data['highestBid'])
+  else:
+    if lowValue > decimal.Decimal(data['lowestAsk']):
       lowValue = decimal.Decimal(data['lowestAsk'])
+    if highValue < decimal.Decimal(data['highestBid']):
       highValue = decimal.Decimal(data['highestBid'])
-    else:
-      if lowValue > decimal.Decimal(data['lowestAsk']):
-        lowValue = decimal.Decimal(data['lowestAsk'])
-      if highValue < decimal.Decimal(data['highestBid']):
-        highValue = decimal.Decimal(data['highestBid'])
 
-    # Criar candles
-    now = datetime.datetime.now()
+  # Criar candles
+  now = datetime.datetime.now()
 
-    if NextCandle1 <= now :
-      print("Hora do Candle de 1min")
-      NextCandle1 += datetime.timedelta(minutes=1)
-      CandleDaoWorking.addCandle(
-        currencyId = 1,
-        frequency = 1,
-        openValue = openValue,
-        closeValue = decimal.Decimal(data['last']),
-        lowValue = openValue,
-        highValue = highValue
-      )
-      # candles1minArray.append(vela)
+  if NextCandle1 <= now :
+    print("Hora do Candle de 1min")
+    NextCandle1 += datetime.timedelta(minutes=1)
+  # Salvar candle 1min
+    dao.addCandle(
+      currencyId = 1,
+      frequency = 1,
+      openValue = openValue,
+      closeValue = decimal.Decimal(data['last']),
+      lowValue = openValue,
+      highValue = highValue
+    )
 
-      openValue = None
-      lowValue = []
-      highValue = []
+    openValue = None
+    lowValue = None
+    highValue = None
+  
 
-
-
-
-
-
-
-
-
-    # if NextCandle5 <= now :
-    #   print("Hora do Candle de 5min")
-    #   NextCandle5 += min5
-    # if NextCandle10 <= now :
-    #   print("Hora do Candle de 10min")
-    #   NextCandle10 += min10
-
-
-
+  # Salvar candle 5min
+  if NextCandle5 <= now :
+    print("Hora do Candle de 5min")
+    NextCandle5 += datetime.timedelta(seconds=30)
+  # Salvar candle 10min
+  if NextCandle10 <= now :
+    print("Hora do Candle de 5min")
+    NextCandle10 += datetime.timedelta(seconds=60)
 
 # Ideia inicial:
 
