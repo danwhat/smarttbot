@@ -15,3 +15,8 @@ class CandleDAO:
     query = "select * from candles"
     result = self.__db.query(query)
     return result
+
+  def get1MinCandlesByCurrencyIdAndTime(self, currency_id, time):
+    query = f"select open_value, close_value, high_value, low_value from candles where frequency=1 and currency_id={currency_id} order by id desc limit {time};"
+    result = self.__db.query(query)
+    return result

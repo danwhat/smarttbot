@@ -41,22 +41,3 @@ class CandleDao:
     query = "select * from candles"
     result = self.__db.query(query)
     return result
-
-# testes:
-# if __name__ == "__main__":
-#   banco = MySqlConnection()
-#   reult = banco.query("select * from currencies;")
-#   for x in reult:
-#     print(x)
-
-# if __name__ == "__main__":
-
-#   testeDao = CandleDao()
-#   testeDao.addCandle(2,5,10,10,15,50)
-#   lupito = testeDao.getAll()
-#   for x in lupito:
-#     print(x[3])
-  # banco = MySqlConnection()
-  # reult = banco.query("select * from currencies;")
-  # for x in reult:
-  #   print(x)

@@ -24,6 +24,3 @@ def CustomCandleFactory(currency_Id, time):
   lowValue = high_value,
   highValue = low_value
   )
-
-
-CustomCandleFactory(1, 5)

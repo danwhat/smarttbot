@@ -58,6 +58,3 @@ class CandleFactory():
     while True:
       schedule.run_pending()
       time.sleep(1)
-
-monero = CandleFactory(2, "USDT_XMR")
-monero.run()
