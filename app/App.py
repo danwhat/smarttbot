@@ -1,22 +1,24 @@
-import time, decimal, datetime
+import time, decimal, datetime, schedule
 from dao.CandleDAO import CandleDAO
 from Helper import APIreturnTicker
+from CustomCandleFactory import CustomCandleFactory
+
 dao = CandleDAO()
 
-NextCandle1 = datetime.datetime.now() + datetime.timedelta(seconds=6)
-NextCandle5 = datetime.datetime.now() + datetime.timedelta(seconds=30)
-NextCandle10 = datetime.datetime.now() + datetime.timedelta(seconds=60)
 
 openValue = None
+closeValue = None
 lowValue = None
 highValue = None
 
 count = 0  
 
-while True:
-  print(f"loop {count}")
-  count += 1
-  time.sleep(1)
+def atualizarValores():
+  global openValue
+  global closeValue
+  global lowValue
+  global highValue
+
   data = APIreturnTicker()
 
   # Atualizar atributos
@@ -25,40 +27,83 @@ while True:
     lowValue = decimal.Decimal(data['lowestAsk'])
     highValue = decimal.Decimal(data['highestBid'])
   else:
+    closeValue = decimal.Decimal(data['last'])
     if lowValue > decimal.Decimal(data['lowestAsk']):
       lowValue = decimal.Decimal(data['lowestAsk'])
     if highValue < decimal.Decimal(data['highestBid']):
       highValue = decimal.Decimal(data['highestBid'])
 
-  # Criar candles
-  now = datetime.datetime.now()
+def printValores():
+  global openValue
+  global closeValue
+  global lowValue
+  global highValue
+  print(openValue)
+  print(closeValue)
+  print(highValue)
+  print(lowValue)
 
-  if NextCandle1 <= now :
-    print("Hora do Candle de 1min")
-    NextCandle1 += datetime.timedelta(minutes=1)
-  # Salvar candle 1min
-    dao.addCandle(
-      currencyId = 1,
-      frequency = 1,
-      openValue = openValue,
-      closeValue = decimal.Decimal(data['last']),
-      lowValue = openValue,
-      highValue = highValue
-    )
+def OneMinCandleFactory():
+  global openValue
+  global closeValue
+  global lowValue
+  global highValue
 
-    openValue = None
-    lowValue = None
-    highValue = None
+  print("Hora do Candle de 1min")
+  dao.addCandle(
+    currencyId = 1,
+    frequency = 1,
+    openValue = openValue,
+    closeValue = closeValue,
+    lowValue = openValue,
+    highValue = highValue
+  )
+
+  openValue = None
+  lowValue = None
+  highValue = None 
+
+def FiveMinCandleFactory():
+  CustomCandleFactory(1,5)
+
+schedule.every(1).seconds.do(atualizarValores)
+# schedule.every(1).minute.do(printValores)
+schedule.every(10).seconds.do(OneMinCandleFactory)
+schedule.every(20).seconds.do(FiveMinCandleFactory)
+
+while True:
+  schedule.run_pending()
+  time.sleep(1)
+
+  # # Criar candles
+  # now = datetime.datetime.now()
+
+  # if NextCandle1 <= now :
+  #   print("Hora do Candle de 1min")
+  #   NextCandle1 += datetime.timedelta(minutes=1)
+  # # Salvar candle 1min
+  #   dao.addCandle(
+  #     currencyId = 1,
+  #     frequency = 1,
+  #     openValue = openValue,
+  #     closeValue = decimal.Decimal(data['last']),
+  #     lowValue = openValue,
+  #     highValue = highValue
+  #   )
+
+  #   openValue = None
+  #   lowValue = None
+  #   highValue = None
   
 
-  # Salvar candle 5min
-  if NextCandle5 <= now :
-    print("Hora do Candle de 5min")
-    NextCandle5 += datetime.timedelta(seconds=30)
-  # Salvar candle 10min
-  if NextCandle10 <= now :
-    print("Hora do Candle de 5min")
-    NextCandle10 += datetime.timedelta(seconds=60)
+  # # Salvar candle 5min
+  # if NextCandle5 <= now :
+  #   print("Hora do Candle de 5min")
+  #   NextCandle5 += datetime.timedelta(seconds=30)
+  # # Salvar candle 10min
+  # if NextCandle10 <= now :
+  #   print("Hora do Candle de 5min")
+  #   NextCandle10 += datetime.timedelta(seconds=60)
 
 # Ideia inicial:
 
