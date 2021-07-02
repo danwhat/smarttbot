@@ -51,9 +51,9 @@ class CandleFactory():
 
   def run(self):
     schedule.every(1).seconds.do(self.atualizarValores)
-    schedule.every(6).seconds.do(self.OneMinCandleFactory)
-    schedule.every(30).seconds.do(self.FiveMinCandleFactory)
-    schedule.every(60).seconds.do(self.TenMinCandleFactory)
+    schedule.every(60).seconds.do(self.OneMinCandleFactory)
+    schedule.every(300).seconds.do(self.FiveMinCandleFactory)
+    schedule.every(600).seconds.do(self.TenMinCandleFactory)
 
     while True:
       schedule.run_pending()
