@@ -7,8 +7,8 @@ class CandleDAO:
     def __init__(self):
         self.__db = MySqlConnection()
 
-    def add_candle(self, currencyId, frequency, openValue, closeValue, lowValue, highValue):
-        query = f"insert into candles(currency_id, frequency, open_value, close_value, low_value, high_value) values ({currencyId},{frequency},{openValue},{closeValue},{lowValue},{highValue});"
+    def add_candle(self, currencyId, frequency, openValue, closeValue, highValue, lowValue):
+        query = f"insert into candles(currency_id, frequency, open_value, close_value, high_value, low_value) values ({currencyId},{frequency},{openValue},{closeValue},{lowValue},{highValue});"
         self.__db.query(query)
 
     def getAll(self):

@@ -11,28 +11,40 @@ from CustomCandleFactory import custom_candle_factory
 class CandleFactory():
 
     def __init__(self, currency_Id, currency_code):
+
+        self.dao = CandleDAO()
         self.currency_Id = currency_Id
         self.currency_code = currency_code
-        self.openValue = None
-        self.closeValue = None
-        self.lowValue = None
-        self.highValue = None
-        self.dao = CandleDAO()
+        self.data_dic = {
+          "openValue": None,
+          "closeValue": None,
+          "lowValue": None,
+          "highValue": None,
+        }
+
+        # self.openValue = None
+        # self.closeValue = None
+        # self.lowValue = None
+        # self.highValue = None
+
 
     def atualizar_valores(self):
         data = APIreturnTicker(self.currency_code)
-
+        new_data_dic = dict(self.data_dic)
         # Atualizar atributos
-        if self.openValue == None:
-            self.openValue = decimal.Decimal(data['last'])
-            self.lowValue = decimal.Decimal(data['lowestAsk'])
-            self.highValue = decimal.Decimal(data['highestBid'])
+        if new_data_dic["openValue"] == None:
+            new_data_dic["openValue"] = decimal.Decimal(data['last'])
+            new_data_dic["lowValue"] = decimal.Decimal(data['lowestAsk'])
+            new_data_dic["highValue"] = decimal.Decimal(data['highestBid'])
         else:
-            self.closeValue = decimal.Decimal(data['last'])
-            if self.lowValue > decimal.Decimal(data['lowestAsk']):
-                self.lowValue = decimal.Decimal(data['lowestAsk'])
-            if self.highValue < decimal.Decimal(data['highestBid']):
-                self.highValue = decimal.Decimal(data['highestBid'])
+            new_data_dic["closeValue"] = decimal.Decimal(data['last'])
+            if new_data_dic["lowValue"] > decimal.Decimal(data['lowestAsk']):
+                new_data_dic["lowValue"] = decimal.Decimal(data['lowestAsk'])
+            if new_data_dic["highValue"] < decimal.Decimal(data['highestBid']):
+                new_data_dic["highValue"] = decimal.Decimal(data['highestBid'])
+
+        self.data_dic = new_data_dic
+        
 
     def one_minute_candle_factory(self):
 
@@ -40,15 +52,18 @@ class CandleFactory():
         self.dao.add_candle(
             currencyId=self.currency_Id,
             frequency=1,
-            openValue=self.openValue,
-            closeValue=self.closeValue,
-            lowValue=self.openValue,
-            highValue=self.highValue
+            openValue=self.data_dic["openValue"],
+            closeValue=self.data_dic["closeValue"],
+            lowValue=self.data_dic["lowValue"],
+            highValue=self.data_dic["highValue"]
         )
 
-        self.openValue = None
-        self.lowValue = None
-        self.highValue = None
+        self.data_dic = {
+          "openValue": None,
+          "closeValue": None,
+          "lowValue": None,
+          "highValue": None,
+        }
 
     def five_minute_candle_factory(self):
         custom_candle_factory(self.currency_Id, 5)
