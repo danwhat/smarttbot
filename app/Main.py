@@ -1,11 +1,14 @@
-from flask import Flask
+from multiprocessing import Process
+from CandleFactory import CandleFactory
+import time
 
-app = Flask(__name__)
-app.debug = True
+print("Iniciando aplicação.")
 
-@app.route('/')
-def hello():
-  return "Hello World"
+bitcoin = CandleFactory(1, "USDT_BTC")
+monero = CandleFactory(2, "USDT_XMR")
 
-if __name__ == '__main__':
-  app.run(host='0.0.0.0')
+bitcoinProcess = Process(target=bitcoin.run)
+moneroProcess = Process(target=monero.run)
+
+bitcoinProcess.start()
+moneroProcess.start()
