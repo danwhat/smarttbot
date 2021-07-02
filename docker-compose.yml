@@ -7,21 +7,23 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: smarttbot
     ports:
-      - "3306:3306"
+      - "5001:3306"
     volumes:
       - ./db/script_db.sql:/script_db.sql
-    networks:
-      - backend
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+    cap_add:
+      - SYS_NICE
   app:
     build: ./app
     working_dir: "/home/app"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: smarttbot
     volumes:
       - ./app:/home/app
-    ports:
-      - "5000:5000"
-    networks:
-      - backend
-
-networks:
-  backend:
-    driver: "bridge"
+    depends_on:
+      db:
+          condition: service_healthy

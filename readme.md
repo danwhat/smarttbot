@@ -16,7 +16,7 @@ Após a aplicação ser inicializada é só esperar:
 
 Basta entrar na pasta do repositório e digitar o comando `docker-compose up`. Todas as dependências do programa serão baixadas e em seguida aparecerá a mensagem **"Iniciando aplicação"**.
 
-Para consumir os dados gerados, utilize o programa de consulta de sua preferência (como mysql workbench ), através do endereço `localhost:3306`.
+Para consumir os dados gerados, utilize o programa de consulta de sua preferência (como mysql workbench ), através do endereço `localhost:5001`.
 
 ## Dificuldades e Próximo Passos
 
