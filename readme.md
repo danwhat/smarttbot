@@ -16,7 +16,7 @@ Após a aplicação ser inicializada é só esperar:
 
 Basta entrar na pasta do repositório e digitar o comando `docker-compose up`. Todas as dependências do programa serão baixadas e em seguida aparecerá a mensagem **"Iniciando aplicação"**.
 
-Para consumir os dados gerados, utilize o programa de consulta de sua preferência (como mysql workbench ), através do endereço `localhost:5001`.
+Para consumir os dados gerados, utilize o programa de consulta de sua preferência (como mysql workbench ), através do banco de dados `smarttbot` no endereço `localhost:5001` com user e senha `root`.
 
 ## Dificuldades e Próximo Passos
 
